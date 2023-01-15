@@ -14,6 +14,7 @@ namespace PinchuckLab
         public DbSet<Client> Clients { get; set; }
         public DbSet<MailBranch> MailBranches { get; set; } 
         public DbSet<Parcel> Parcels { get; set; }
+        public DbSet<Employee> Employees { get; set; }
         
         
         public MailContext() {}
@@ -25,8 +26,10 @@ namespace PinchuckLab
            .AddJsonFile("appsetings.json")
            .Build();
 
-            optionsBuilder.UseSqlServer(configuration
-                .GetConnectionString("DefaultConnection"));
+            optionsBuilder
+                .UseSqlServer(configuration
+                .GetConnectionString("DefaultConnection"))
+                .UseLazyLoadingProxies();   //lazy loading
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
