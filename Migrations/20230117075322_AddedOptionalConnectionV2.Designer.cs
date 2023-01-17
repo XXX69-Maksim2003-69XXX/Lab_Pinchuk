@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PinchuckLab;
 
@@ -11,9 +12,11 @@ using PinchuckLab;
 namespace PinchuckLab.Migrations
 {
     [DbContext(typeof(MailContext))]
-    partial class MailContextModelSnapshot : ModelSnapshot
+    [Migration("20230117075322_AddedOptionalConnectionV2")]
+    partial class AddedOptionalConnectionV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +45,7 @@ namespace PinchuckLab.Migrations
 
                     b.Property<string>("Passport")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -205,6 +208,9 @@ namespace PinchuckLab.Migrations
                     b.Property<decimal>("Ammount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("ClientId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -214,14 +220,11 @@ namespace PinchuckLab.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Passport")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("Passport")
+                    b.HasIndex("ClientId")
                         .IsUnique()
-                        .HasFilter("[Passport] IS NOT NULL");
+                        .HasFilter("[ClientId] IS NOT NULL");
 
                     b.ToTable("Payment");
                 });
@@ -260,8 +263,7 @@ namespace PinchuckLab.Migrations
                 {
                     b.HasOne("PinchuckLab.Models.Client", "Client")
                         .WithOne("Payment")
-                        .HasForeignKey("PinchuckLab.Models.Payment", "Passport")
-                        .HasPrincipalKey("PinchuckLab.Models.Client", "Passport");
+                        .HasForeignKey("PinchuckLab.Models.Payment", "ClientId");
 
                     b.Navigation("Client");
                 });
