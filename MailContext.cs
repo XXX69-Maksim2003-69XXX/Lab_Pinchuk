@@ -14,6 +14,7 @@ namespace PinchuckLab
         public DbSet<Client> Clients { get; set; }
         public DbSet<MailBranch> MailBranches { get; set; } 
         public DbSet<Parcel> Parcels { get; set; }
+        public DbSet<Employee> Employees { get; set; }
         
         
         public MailContext() {}
@@ -25,27 +26,14 @@ namespace PinchuckLab
            .AddJsonFile("appsetings.json")
            .Build();
 
-            optionsBuilder.UseSqlServer(configuration
-                .GetConnectionString("DefaultConnection"));
+            optionsBuilder
+                .UseSqlServer(configuration
+                .GetConnectionString("DefaultConnection"))
+                .UseLazyLoadingProxies();   //lazy loading
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Використання підходу TPT для наслідування
-            modelBuilder.Entity<Client>().ToTable("Clients");
-            modelBuilder.Entity<Employee>().ToTable("Employees");
-            
-            // встановлюю поле Passport у класі Client як унікальне
-            modelBuilder.Entity<Client>()
-                .HasAlternateKey(x => x.Passport);
-
-            // Не обов'язкове з'єднання таблиці Client та таблиці Payment через поле Passport
-            modelBuilder.Entity<Client>()
-                .HasOne(x => x.Payment)
-                .WithOne(x => x.Client)
-                .HasForeignKey<Payment>(x => x.Passport)
-                .HasPrincipalKey<Client>(x => x.Passport);
-            
             
             modelBuilder.Entity<Employee>()
                 .Property(x => x.Position).HasMaxLength(50);
