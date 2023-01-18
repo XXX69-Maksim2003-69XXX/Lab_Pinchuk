@@ -42,7 +42,7 @@ namespace PinchuckLab.Migrations
 
                     b.Property<string>("Passport")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -214,7 +214,14 @@ namespace PinchuckLab.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Passport")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Passport")
+                        .IsUnique()
+                        .HasFilter("[Passport] IS NOT NULL");
 
                     b.ToTable("Payment");
                 });
@@ -249,9 +256,21 @@ namespace PinchuckLab.Migrations
                     b.Navigation("Payment");
                 });
 
+            modelBuilder.Entity("PinchuckLab.Models.Payment", b =>
+                {
+                    b.HasOne("PinchuckLab.Models.Client", "Client")
+                        .WithOne("Payment")
+                        .HasForeignKey("PinchuckLab.Models.Payment", "Passport")
+                        .HasPrincipalKey("PinchuckLab.Models.Client", "Passport");
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("PinchuckLab.Models.Client", b =>
                 {
                     b.Navigation("Parcels");
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("PinchuckLab.Models.MailBranch", b =>
